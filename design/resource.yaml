@@ -1,0 +1,41 @@
+apiVersion: k7s.io/v1
+kind: ResourceDefinition
+metadata:
+  name: kafka
+spec:
+  apiVersion: v1
+  kind: StatefulSet
+  spec:
+    replicas: 1
+    template:
+      spec:
+        containers:
+        - name: kafka
+          image: wurstmeister/kafka
+          ports:
+          - containerPort: 9092
+          env:
+          - name: KAFKA_ZOOKEEPER_CONNECT
+            value: zoo1:2181,zoo2:2181
+---
+apiVersion: k7s.io/v1
+kind: Resource
+metadata:
+  name: kafka1
+spec:
+  extend: kafka
+  apiVersion: v1
+  kind: Deployment
+  metadata:
+    name: kafka1
+  spec:
+    replicas: 1
+    selector:
+      app: kafka1
+    template:
+      metadata:
+        labels:
+          app: kafka1
+      spec:
+        containers:
+        - name: kafka1

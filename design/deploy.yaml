@@ -1,0 +1,44 @@
+apiVersion: k7s.io/v1
+kind: DeployStep
+metadata:
+  name: zookeeper
+spec:
+  action: OrderlyDeploy
+  components:
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: zookeeper-svc
+  - apiVersion: v1
+    kind: StatefulSet
+    metadata:
+      name: zookeeper
+---
+apiVersion: k7s.io/v1
+kind: DeployStep
+metadata:
+  name: kafka
+spec:
+  action: OrderlyDeploy
+  resources:
+  - name: kafka1
+  components:
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: kafka-svc
+  - apiVersion: v1
+    kind: StatefulSet
+    metadata:
+      name: kafka
+---
+apiVersion: k7s.io/v1
+kind: DeployPipeline
+metadata:
+  name: kafka-cluster-pipeline
+spec:
+  action: OrderlyDeploy
+  interrupt: Never|Exception
+  steps:
+  - name: zookeeper
+  - name: kafka
