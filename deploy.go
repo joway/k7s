@@ -1,4 +1,4 @@
-package resource
+package main
 
 type DeployStep struct {
 	Name string
